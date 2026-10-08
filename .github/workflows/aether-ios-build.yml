@@ -1,0 +1,47 @@
+name: AETHER Deep Ocean - iOS shader build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Prepare compiler
+        run: ./build.sh setup
+
+      - name: Compile iOS shader pack
+        run: ./build.sh pack -p ios
+
+      - name: List build outputs
+        run: |
+          find build -type f -maxdepth 4 -print
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aether-ios-build
+          path: build/
+          if-no-files-found: error
+          retention-days: 7
