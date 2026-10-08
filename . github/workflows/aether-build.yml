@@ -1,5 +1,5 @@
 
-name: AETHER Deep Ocean - iOS shader build
+name: AETHER Deepp Ocean - iOS shader build
 
 on:
   workflow_dispatch:
