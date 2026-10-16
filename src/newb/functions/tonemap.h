@@ -54,11 +54,33 @@ vec3 colorCorrectionInv(vec3 col) {
     col = mix(vec3_splat(dot(col,vec3(0.21, 0.71, 0.08))), col, 1.0/NL_SATURATION);
   #endif
 
-  // incomplete
-  // extended reinhard only
-  float ws = 0.7966;
+  // inverse gamma correction
   col = pow(col, vec3_splat(NL_GAMMA));
-  col = col*(ws + col)/(ws + col*(1.0 - ws));
+
+  // inverse tonemapping (must match NL_TONEMAP_TYPE in colorCorrection)
+  #if NL_TONEMAP_TYPE == 1
+    // exponential tonemap: y = 1-exp(-x*0.8)
+    col = -1.25*log(max(vec3_splat(1.0)-col, vec3_splat(0.0001)));
+  #elif NL_TONEMAP_TYPE == 2
+    // reinhard tonemap: y = x/(1+x)
+    col = col/max(vec3_splat(1.0)-col, vec3_splat(0.0001));
+  #elif NL_TONEMAP_TYPE == 4
+    // aces tonemap inverse (positive root) - also undoes the 0.85 premultiply
+    const float a4 = 1.04;
+    const float b4 = 0.03;
+    const float c4 = 0.93;
+    const float d4 = 0.56;
+    const float e4 = 0.14;
+    vec3 qa = c4*col - a4;
+    vec3 qb = d4*col - b4;
+    vec3 qd = max(qb*qb - 4.0*e4*col*qa, vec3_splat(0.0));
+    col = (-qb - sqrt(qd))/(2.0*qa);
+    col /= 0.85;
+  #else
+    // extended reinhard tonemap (approximate inverse)
+    float ws = 0.7966;
+    col = col*(ws + col)/(ws + col*(1.0 - ws));
+  #endif
 
   #ifdef NL_EXPOSURE
     col /= NL_EXPOSURE;

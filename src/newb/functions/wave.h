@@ -48,9 +48,9 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   int texN = 64*int(uv0.y*32.0) + int(uv0.x*64.0);
 
   if ( // full
-    (texN>=18 && texN<=20) || // Azeala Leaves and Flowering Azeala Leaves
+    (texN>=18 && texN<=20) || // Azalea Leaves and Flowering Azalea Leaves
     (texN>=177 && texN<=180) || // Cave Vines
-    (texN>=186 && texN<=187) || // Cherrry Leaves (Fixed) 
+    (texN>=186 && texN<=187) || // Cherry Leaves (Fixed) 
     (texN>=444 && texN<=459) || (texN==678) || // tall flowers/plants top
     (texN>=796 && texN<=797) || // Pale Hanging Moss
     (texN>=803 && texN<=804) || // Pale Oak Leaves
@@ -58,34 +58,34 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   ) {
     shouldWave = true;
   } else if ( // top only
-    (texN==6) || // Acacia Sappling
-    (texN==8) || // Allium (NEW
-    (texN==25) || // Azure Bluet (NEW
-    (texN==85) || // Birch sappling
+    (texN==6) || // Acacia Sapling
+    (texN==8) || // Allium (NEW)
+    (texN==25) || // Azure Bluet (NEW)
+    (texN==85) || // Birch Sapling
     (texN==110) || // Blue Orchid
     (texN==145) || // Cactus Flower
     (texN==192) || // Cherry Blossom Sapling
     (texN==223) || // Closed Eyeblossom
     (texN==336) || // Cornflower
     (texN==387) || // Dandelion
-    (texN==390) || // Dark Oak Sappling
+    (texN==390) || // Dark Oak Sapling
     (texN==396) || // Dead Bush
     (texN>445 && texN<453) || // tall flowers/plants bottom
     (texN>=530 && texN<=531) || // Firefly Bush
     (texN==564) || // Golden Dandelion
-    (texN==642) || // Jungle Sappling
+    (texN==642) || // Jungle Sapling
     (texN==679) || // Lily of the Valley
     (texN>=715 && texN<=717) || // Mangrove Propagule
-    (texN==753) || // Oak Sappling
+    (texN==753) || // Oak Sapling
     (texN>=761 && texN<=763) || // Open Eyeblossom
     (texN==773) || // Orange Tulip
     (texN==774) || // Oxeye Daisy
-    (texN==808) || // Pale Oak Sappling
+    (texN==808) || // Pale Oak Sapling
     (texN==823) || // Pink Tulip (New)
     (texN==861) || // Poppy
     (texN==914) || // Red Tulip
-    (texN==915) || // White Tilip
-    (texN==945) ||  // Spruce Sappling
+    (texN==915) || // White Tulip
+    (texN==945) ||  // Spruce Sapling
     (texN==1011) || // Spore Blossom Petal
     (texN>=1079 && texN<=1082) || // Sweet Berries Bush
     (texN==1084) || // Tall Dry Grass
@@ -94,7 +94,7 @@ void extraPlantsFlag(inout bool shouldWave, vec2 uv0, bool isTop) {
   ) {
     shouldWave = isTop;
   } else if ( // bottom only
-    (texN==23 || texN==547) ||  // Azeala
+    (texN==23 || texN==547) ||  // Azalea
     (texN==610) // Hanging Roots
   ) { 
     shouldWave = !isTop;

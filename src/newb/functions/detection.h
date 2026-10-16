@@ -19,6 +19,11 @@ bool detectEnd(vec3 FOG_COLOR) {
   return FOG_COLOR.r==FOG_COLOR.b && (FOG_COLOR.r-FOG_COLOR.g>0.24 || (FOG_COLOR.g==0.0 && FOG_COLOR.r>0.1));
 }
 
+// NOTE: nether/underwater/rain detection relies on reverse-engineered values of
+// vanilla FOG_COLOR/FOG_CONTROL. These heuristics can break on MC updates and must
+// be re-validated whenever the fog behavior changes (End is handled via a custom
+// biome fog color in assets/biomes_client.json instead).
+
 bool detectNether(vec3 FOG_COLOR, vec2 FOG_CONTROL) {
   // fogctrl.xy varies with renderdistance
   // x range (0.03,0.14)
@@ -50,13 +55,9 @@ float detectRain(vec3 FOG_CONTROL) {
   return val*val*(3.0 - 2.0*val);
 }
 
-float detectDayFactor(vec3 FOG_COLOR) {
-  return min(dot(FOG_COLOR, vec3(0.5,0.7,0.5)), 1.0);
-}
-
 nl_environment calculateSunParams(nl_environment env, float TIME_OF_DAY) {
   float t = 2.0 * PI * TIME_OF_DAY;
-  vec3 sunDir = vec3(sin(t), cos(t), 0.0); 
+  vec3 sunDir = vec3(sin(t), cos(t), 0.0);
   vec3 moonDir = vec3(-sunDir.x, -sunDir.y, 0.0);
   env.dayFactor = sunDir.y;
 

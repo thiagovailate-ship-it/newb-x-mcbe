@@ -9,6 +9,8 @@ jobs:
   multiplatform:
     runs-on: windows-2022
     steps:
+    # NOTE: files/dirs with trailing dots or spaces (e.g. 'aether-build.yml.')
+    # break checkout on Windows runners - never commit such names.
     - uses: actions/checkout@v7
     - uses: actions/setup-python@v7
       with:
@@ -21,8 +23,10 @@ jobs:
           ${{ github.workspace }}/tool/data
     - run: pip install -r requirements.txt
     - run: |
-        .\build.bat setup
-        .\build.bat pack -p multiplatform -v 99 --no-zip
+        .\\build.bat setup
+        .\\build.bat pack -p multiplatform -v 99 --no-zip
+    # compile materials for Android too - catches GLSL ES specific shader errors
+    - run: .\\build.bat mats -p android
     - uses: actions/upload-artifact@v4
       with:
         name: newb-x-multiplatform-pr

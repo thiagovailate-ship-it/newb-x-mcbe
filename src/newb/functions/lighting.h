@@ -7,11 +7,44 @@
 #include "noise.h"
 #include "clouds.h"
 
-vec3 sunLightTint(float dayFactor, float rain) {
+// environment-specific torch light color
+vec3 nlTorchColor(nl_environment env) {
+  if (env.underwater) {
+    return NL_UNDERWATER_TORCH_COL;
+  } else if (env.end) {
+    return NL_END_TORCH_COL;
+  } else if (env.nether) {
+    return NL_NETHER_TORCH_COL;
+  }
+  return NL_OVERWORLD_TORCH_COL;
+}
+
+// dawn/dusk transition factor (peaks at sunrise/sunset, near 0.0 at noon/midnight)
+float nlDawnFactor(float dayFactor) {
   float nightFactor = step(dayFactor, 0.0);
   float dawnFactor = 1.0-dayFactor*dayFactor;
   dawnFactor *= dawnFactor*dawnFactor;
   dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
+  return dawnFactor;
+}
+
+// night darkening factor (0.0 at noon, 1.0 at midnight)
+float nlNightIntensity(float dayFactor) {
+  float n = 1.0-(0.5+0.5*dayFactor);
+  return n*n;
+}
+
+// attenuation of direct sun light along the sun path (fades light on the
+// side opposite to sunrise/sunset). NL_SUN_PATH_YAW is defined in degrees.
+float nlSunAttenuation(vec3 wPos, float dawnFactor, float TIME_OF_DAY, float renderdistance) {
+  float yaw = degToRad(NL_SUN_PATH_YAW);
+  float a = clamp(0.5*(((2.0*step(TIME_OF_DAY, 0.5)-1.0)*(wPos.x*cos(yaw)+wPos.y*sin(yaw))/renderdistance) + 1.0), 0.0, 1.0);
+  return mix(1.0, a*a, dawnFactor);
+}
+
+vec3 sunLightTint(float dayFactor, float rain) {
+  float nightFactor = step(dayFactor, 0.0);
+  float dawnFactor = nlDawnFactor(dayFactor);
   vec3 tint = mix(NL_NOON_SUNLIGHT_COL, NL_NIGHT_MOONLIGHT_COL, nightFactor);
   tint = mix(tint, NL_DAWN_SUNLIGHT_COL, dawnFactor);
   tint = mix(tint, vec3_splat(dot(tint, vec3_splat(0.33))), rain);
@@ -24,15 +57,7 @@ vec3 nlLighting(
 ) {
   vec3 light;
 
-  if (env.underwater) {
-    torchColor = NL_UNDERWATER_TORCH_COL;
-  } else if (env.end) {
-    torchColor = NL_END_TORCH_COL;
-  } else if (env.nether) {
-    torchColor = NL_NETHER_TORCH_COL;
-  } else {
-    torchColor = NL_OVERWORLD_TORCH_COL;
-  }
+  torchColor = nlTorchColor(env);
 
   float torchAttenuation = (NL_TORCHLIGHT_INTENSITY*uv1.x)/(0.5-0.45*lit.x);
 
@@ -55,15 +80,9 @@ vec3 nlLighting(
 
   } else {
     // overworld lighting
-    float nightFactor = step(env.dayFactor, 0.0);
-    float dawnFactor = 1.0-env.dayFactor*env.dayFactor;
-    dawnFactor *= dawnFactor*dawnFactor;
-    dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
-    float nightIntensity = 1.0-(0.5+0.5*env.dayFactor);
-    nightIntensity *= nightIntensity;
-
-    float sunLightAttenuation = clamp(0.5*(((2.0*step(TIME_OF_DAY, 0.5)-1.0)*(wPos.x*cos(NL_SUN_PATH_YAW)+wPos.y*sin(NL_SUN_PATH_YAW))/renderdistance) + 1.0), 0.0, 1.0);
-    sunLightAttenuation = mix(1.0, sunLightAttenuation*sunLightAttenuation, dawnFactor);
+    float nightIntensity = nlNightIntensity(env.dayFactor);
+    float dawnFactor = nlDawnFactor(env.dayFactor);
+    float sunLightAttenuation = nlSunAttenuation(wPos, dawnFactor, TIME_OF_DAY, renderdistance);
     sunLightAttenuation *= 1.0-0.4*env.rainFactor;
 
     // shadow cast by sun light
@@ -73,7 +92,7 @@ vec3 nlLighting(
     #if defined(NL_CLOUD_SHADOW) && (NL_CLOUD_TYPE == 1 || NL_CLOUD_TYPE == 2)
       vec3 mainLightDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
       vec3 gPos = wPos + CAMERA_POS;
-      float cloudRelativeHeight = gPos.y-187.0;
+      float cloudRelativeHeight = gPos.y-NL_CLOUD_HEIGHT;
       vec2 projectionOffset = cloudRelativeHeight*mainLightDir.xz/mainLightDir.y;
       vec2 projectedPos = gPos.xz + projectionOffset;
       float cloudFade = smoothstep(1.0, 0.5, length(0.002*(wPos.xz + projectionOffset)));
@@ -151,15 +170,8 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
     tl = max(tl-0.08, 0.0);
     tl *= 4.0*tl;
 
-    float nightFactor = step(env.dayFactor, 0.0);
-    float dawnFactor = 1.0-env.dayFactor*env.dayFactor;
-    dawnFactor *= dawnFactor*dawnFactor;
-    dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
-    float nightIntensity = 1.0-(0.5+0.5*env.dayFactor);
-    nightIntensity *= nightIntensity;
-
-    float sunLightAttenuation = clamp(0.5*(((2.0*step(TIME_OF_DAY, 0.5)-1.0)*(wPos.x*cos(NL_SUN_PATH_YAW)+wPos.y*sin(NL_SUN_PATH_YAW))/renderdistance) + 1.0), 0.0, 1.0);
-    sunLightAttenuation = mix(1.0, sunLightAttenuation*sunLightAttenuation, dawnFactor);
+    float dawnFactor = nlDawnFactor(env.dayFactor);
+    float sunLightAttenuation = nlSunAttenuation(wPos, dawnFactor, TIME_OF_DAY, renderdistance);
     sunLightAttenuation *= 1.0-0.5*env.rainFactor;
 
     // direct light from top
@@ -173,22 +185,12 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   }
 
   // torch light
-  vec3 torchColor;
-  if (env.underwater) {
-    torchColor = NL_UNDERWATER_TORCH_COL;
-  } else if (env.end) {
-    torchColor = NL_END_TORCH_COL;
-  } else if (env.nether) {
-    torchColor = NL_NETHER_TORCH_COL;
-  } else {
-    torchColor = NL_OVERWORLD_TORCH_COL;
-  }
+  vec3 torchColor = nlTorchColor(env);
 
   lum = luminance(light);
   light += torchColor*(smoothstep(0.1, 0.0, tileLightCol.b-tileLightCol.r)*NL_TORCHLIGHT_INTENSITY*tl/(1.0+lum));
 
   // game min brightness
-  lum = luminance(light);
   if (!(env.nether || env.end)) {
     lum = luminance(light);
     light += vec3_splat(min(tileLightCol.r, 0.15)*(NL_MIN_LIGHTING_BOOST/(1.0+lum)));

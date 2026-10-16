@@ -53,7 +53,8 @@ def create_pack_manifest(config: dict) -> dict:
         'modules': [
             {
                 'type': 'resources',
-                'uuid': '900f3d8b-37b4-465f-8f56-941687e36c35',
+                # unique to this fork - do NOT reuse upstream's module UUID
+                'uuid': 'a49ffa0d-965c-42b3-8e89-878b6623c753',
                 'version': config['version']
             }
         ],
