@@ -163,7 +163,7 @@ vec4 renderAurora(vec3 p, float t, float rain, float dayFactor) {
 
 vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 wPos, vec3 CAMERA_POS, highp float t) {
   vec2 cloudPos = wPos.xz;
-  cloudPos += (187.0-(wPos.y+CAMERA_POS.y))*viewDir.xz/viewDir.y;
+  cloudPos += (NL_CLOUD_HEIGHT-(wPos.y+CAMERA_POS.y))*viewDir.xz/viewDir.y;
   float fade = clamp(2.0 - 0.005*length(cloudPos), 0.0, 1.0);
   cloudPos += CAMERA_POS.xz;
 

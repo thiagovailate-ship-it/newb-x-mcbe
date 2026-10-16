@@ -19,7 +19,7 @@ void main() {
     v_underwaterRainTimeDay.x = float(detectUnderwater(FogColor.rgb, FogAndDistanceControl.xy));
     v_underwaterRainTimeDay.y = detectRain(FogAndDistanceControl.xyz);
     v_underwaterRainTimeDay.z = ViewPositionAndTime.w;
-    v_underwaterRainTimeDay.w = detectDayFactor(FogColor.rgb);
+    v_underwaterRainTimeDay.w = 0.0; // dayFactor is derived from sun direction in fragment
 
     // background quad
     vec4 pos = vec4(a_position.xzy, 1.0);

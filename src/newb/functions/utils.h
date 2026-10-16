@@ -5,6 +5,9 @@
 #define PI_HALF 1.570796
 #define PI_QUART 0.785398
 
+// vanilla cloud plane height in blocks (engine constant, not a user setting)
+#define NL_CLOUD_HEIGHT 187.0
+
 mat2 rmat2(float t) {
   float sint = sin(t);
   float cost = cos(t);

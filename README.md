@@ -1,3 +1,14 @@
+# AETHER Deep Ocean
+
+> [!NOTE]
+> **AETHER Deep Ocean** is a fork of [Newb X Legacy](https://github.com/devendrn/newb-x-mcbe) (by [devendrn](https://github.com/devendrn)). All credit for the shader goes to the original author and contributors. This fork adds an iOS-focused build workflow and a set of fixes on top of the original source:
+> - Fixed sun path yaw using degrees directly in `cos()`/`sin()` (radians) in terrain and entity lighting
+> - Tonemap inverse (`colorCorrectionInv`) now matches the selected `NL_TONEMAP_TYPE`
+> - Removed duplicated/dead code, new lighting helpers (`nlTorchColor`, `nlDawnFactor`, `nlNightIntensity`, `nlSunAttenuation`)
+> - Own pack UUIDs (no conflict with the official pack)
+
+---
+
 # Newb X Legacy
 
 **Newb X Legacy** is a RenderDragon successor to the legacy GLSL shader, [Newb Shader](https://github.com/devendrn/newb-shader-mcbe). It is an enhanced vanilla shader that focuses on being lightweight and having soft aesthetics. It supports Minecraft Bedrock 1.26+ (Windows/Android/iOS).

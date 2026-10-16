@@ -70,7 +70,7 @@ vec3 nlGlow(sampler2D tex, vec2 uv, float shimmer) {
     // sides
     g = max(g, max(max(c2*v.x, c4*u.y), max(c6*u.x, c8*v.y)));
 
-    // apply attuenation and add to glow
+    // apply attenuation and add to glow
     g = ((g*0.7 + 0.2)*g + 0.1)*g;
     glow = max(glow, g*NL_GLOW_LEAK);
   #endif

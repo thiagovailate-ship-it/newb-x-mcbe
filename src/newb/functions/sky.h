@@ -161,20 +161,6 @@ vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, float t, 
     sky = renderEndSky(skycol.horizon, skycol.zenith, viewDir, t);
   } else {
     sky = renderOverworldSky(skycol, env, viewDir, isSkyPlane);
-    #ifdef NL_UNDERWATER_STREAKS
-      // if (env.underwater) {
-      //   float a = atan2(viewDir.x, viewDir.z);
-      //   float grad = 0.5 + 0.5*viewDir.y;
-      //   grad *= grad;
-      //   float spread = (0.5 + 0.5*sin(3.0*a + 0.2*t + 2.0*sin(5.0*a - 0.4*t)));
-      //   spread *= (0.5 + 0.5*sin(3.0*a - sin(0.5*t)))*grad;
-      //   spread += (1.0-spread)*grad;
-      //   float streaks = spread*spread;
-      //   streaks *= streaks;
-      //   streaks = (spread + 3.0*grad*grad + 4.0*streaks*streaks);
-      //   sky += 2.0*streaks*skycol.horizon;
-      // }
-    #endif
   }
 
   return sky;
@@ -223,15 +209,15 @@ vec3 nlRenderGalaxy(vec3 vdir, vec3 fogColor, nl_environment env, float t) {
   t *= NL_GALAXY_SPEED;
 
   // rotate space
-  float cosb = sin(0.2*t);
-  float sinb = cos(0.2*t);
+  float sinb = sin(0.2*t);
+  float cosb = cos(0.2*t);
   vdir.xy = mul(mat2(cosb, sinb, -sinb, cosb), vdir.xy);
 
   // noise
   float n0 = 0.5 + 0.5*sin(5.0*vdir.x)*sin(5.0*vdir.y - 0.5*t)*sin(5.0*vdir.z + 0.5*t);
   float n1 = noise3D(15.0*vdir + sin(0.85*t + 1.3));
   float n2 = noise3D(50.0*vdir + 1.0*n1 + sin(0.7*t + 1.0));
-  float n3 = noise3D(200.0*vdir - 10.0*sin(0.4*t + 0.500));
+  float n3 = noise3D(200.0*vdir - 10.0*sin(0.4*t + 0.5));
 
   // stars
   n3 = smoothstep(0.04,0.3,n3+0.02*n2);

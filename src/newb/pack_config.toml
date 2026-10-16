@@ -1,26 +1,25 @@
-name = "Newb Classic"
+name = "AETHER Deep Ocean"
 version = [0, 16, 55]
 min_supported_mc_version = [1, 26, 40]
 description = '''
 §c%w
-§7- An enchanced vanilla shader for Minecraft!
+§7- An enhanced vanilla shader for Minecraft!
+§7Fork of Newb X Legacy by devendrn
 %v
-§3https://newb-shader.devendrn.com/
+§3https://github.com/thiagovailate-ship-it/newb-x-mcbe
 ''' # %w = patch warning, %v = version
-authors = ["devendrn"]
-url = "https://newb-shader.devendrn.com/"
-uuid = "95f774cf-4afa-73e7-a21a-72146307b1d2" # Use https://www.uuidgenerator.net/version4
+authors = ["devendrn", "thiagovailate-ship-it"]
+url = "https://github.com/thiagovailate-ship-it/newb-x-mcbe"
+uuid = "4037b24c-4918-4f8a-a49b-27191bb0627c" # unique to this fork - do NOT reuse upstream's UUID (pack conflict)
 materials = ["Actor", "ActorGlint", "ActorMultiTexture", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "RenderChunk","Sky", "Stars", "SunMoon", "Weather"]
 
 [info] 
 copyright = '''
-Copyright © 2026 %a, and "Newb Shader" Contributors
+Copyright © 2026 %a
 
-This compiled "Newb Shader" resource pack (source code: https://github.com/devendrn/newb-x-mcbe under MIT License) is licensed under CC BY-ND 4.0 (https://creativecommons.org/licenses/by-nd/4.0/). Redistribute only unmodified copies with proper attribution to "Newb Shader" and variant creators (if any). Do not distribute derivatives.
+"AETHER Deep Ocean" is a fork of "Newb Shader" (source code: https://github.com/devendrn/newb-x-mcbe, licensed under the MIT License). This compiled resource pack is distributed under terms compatible with the MIT License. Redistribute only with proper attribution to "Newb Shader" and the "AETHER Deep Ocean" authors.
 
-You can compile the shader from source and distribute the result under your own terms (compatible with the MIT License).
-
-Contact (Discord Server): https://discord.gg/newb-community-844591537430069279
+Contact: https://github.com/thiagovailate-ship-it/newb-x-mcbe
 ''' # %a = authors
 credits = '''
 '''

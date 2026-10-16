@@ -20,9 +20,8 @@ void main() {
     env.nether = false;
     env.underwater = v_underwaterRainTimeDay.x > 0.5;
     env.rainFactor = v_underwaterRainTimeDay.y;
-    env.dayFactor = v_underwaterRainTimeDay.w;
     env.fogCol = FogColor.rgb;
-    env = calculateSunParams(env, TimeOfDay.x);
+    env = calculateSunParams(env, TimeOfDay.x); // also sets env.dayFactor
 
     nl_skycolor skycol = nlOverworldSkyColors(env);
 
